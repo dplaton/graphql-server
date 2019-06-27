@@ -1,8 +1,8 @@
-type Book {
-    title: String!
-    author: String!
+type Product {
+    name: String!
+    sku: String!
 }
 
 type Query {
-    books: [Book]
+    products: [Product]
 }

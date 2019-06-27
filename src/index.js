@@ -1,6 +1,8 @@
 import {ApolloServer, gql} from 'apollo-server';
 import typeDefs from './schema.graphql';
+import Query from './resolvers/Query';
 
+require('dotenv');
 const books = [
     {
         title: 'The Stand',
@@ -12,13 +14,8 @@ const books = [
     }
 ];
 
-const resolvers = {
-    Query: {
-        books: () => books
-    }
-};
-
-const server = new ApolloServer({typeDefs, resolvers});
+console.log(Query);
+const server = new ApolloServer({typeDefs, resolvers: {Query}});
 
 server.listen().then(({url}) => {
     console.log(`🚀 Server ready at ${url}`);
