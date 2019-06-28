@@ -4,5 +4,5 @@ type Product {
 }
 
 type Query {
-    products: [Product]
+    products(searchTerm: String): [Product]
 }

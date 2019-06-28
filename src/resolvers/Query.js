@@ -1,10 +1,10 @@
 import MagentoGraphqlApi from '../datasources/MagentoGraphqlApi';
 
-const magentoApi = new MagentoGraphqlApi();
-
 export default {
-    products: async () => {
-        const {items} = await magentoApi.searchProducts('aug');
+    products: async (parent, args, {dataSources}, info) => {
+        const searchTerm = args.searchTerm;
+        console.log(`Searching for ${searchTerm}`);
+        const {items} = await dataSources.magentoApi.searchProducts(searchTerm);
 
         const products = items.map(item => {
             return {

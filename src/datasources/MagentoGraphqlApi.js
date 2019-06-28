@@ -2,9 +2,9 @@ import {GraphQLDataSource} from 'apollo-datasource-graphql';
 import productSearch from './productSearch.graphql';
 
 class MagentoGraphqlApi extends GraphQLDataSource {
-    constructor() {
+    constructor({url}) {
         super();
-        this.baseURL = process.env.MAGENTO_GRAPHQL_URL;
+        this.baseURL = url;
     }
 
     async searchProducts(inputText) {
