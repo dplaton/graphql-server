@@ -9,17 +9,6 @@ const graphqlRule = {
     loader: 'graphql-tag/loader'
 };
 
-const jsRule = {
-    test: /\.js/,
-    exclude: /node_modules/,
-    use: {
-        loader: 'babel-loader',
-        options: {
-            plugins: ['@babel/plugin-proposal-class-properties']
-        }
-    }
-};
-
 const config = {
     entry: './src/index.js',
     output: {
@@ -27,7 +16,7 @@ const config = {
         filename: 'server.js'
     },
     module: {
-        rules: [graphqlRule, jsRule]
+        rules: [graphqlRule]
     },
     mode: 'development',
     // we're not going to run it in a browser
