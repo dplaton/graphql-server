@@ -3,6 +3,24 @@ type Product {
     sku: String!
 }
 
+type GuestCart {
+    id: String!
+    currency: String!
+    items: [CartItem]!
+    quote: String!
+}
+
+type CartItem {
+    id: String!
+    qty: Int!
+    sku: String!
+}
+
 type Query {
     products(searchTerm: String): [Product]
+    cart(cartId: String!): GuestCart
+}
+
+type Mutation {
+    createCart: GuestCart
 }

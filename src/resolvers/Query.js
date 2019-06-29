@@ -4,7 +4,9 @@ export default {
     products: async (parent, args, {dataSources}, info) => {
         const searchTerm = args.searchTerm;
         console.log(`Searching for ${searchTerm}`);
-        const {items} = await dataSources.magentoApi.searchProducts(searchTerm);
+        const {items} = await dataSources.magentoGraphqlApi.searchProducts(
+            searchTerm
+        );
 
         const products = items.map(item => {
             return {
@@ -14,5 +16,24 @@ export default {
         });
 
         return products;
+    },
+
+    cart: async (parent, args, {dataSources}, info) => {
+        const cartId = args.cartId;
+        if (!cartId) {
+            throw new Error('You have to supply a cart id');
+        }
+        try {
+            const cart = await dataSources.magentoRestApi
+                .getCart(cartId)
+                .catch(e => console.log(e));
+            return {
+                id: cart.id,
+                currency: cart.currency.global_currency_code,
+                items: cart.items
+            };
+        } catch (e) {
+            console.error(e);
+        }
     }
 };

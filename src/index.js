@@ -1,18 +1,23 @@
 import {ApolloServer, gql} from 'apollo-server';
 import typeDefs from './schema.graphql';
 import Query from './resolvers/Query';
+import Mutation from './resolvers/Mutation';
 
 import MagentoGraphqlApi from './datasources/MagentoGraphqlApi';
+import MagentoRestApi from './datasources/MagentoRestApi';
 
 require('dotenv');
 
 const server = new ApolloServer({
     typeDefs,
-    resolvers: {Query},
+    resolvers: {Query, Mutation},
     dataSources: () => {
         return {
-            magentoApi: new MagentoGraphqlApi({
+            magentoGraphqlApi: new MagentoGraphqlApi({
                 url: process.env.MAGENTO_GRAPHQL_URL
+            }),
+            magentoRestApi: new MagentoRestApi({
+                url: process.env.MAGENTO_REST_URL
             })
         };
     }
