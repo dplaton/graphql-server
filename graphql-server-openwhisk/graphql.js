@@ -16,7 +16,12 @@ const resolvers = {
         hello: () => 'Hello world!'
     }
 };
-console.log(`Building the server...`);
+console.log(`[graphql] Building the server...`);
 const server = new ApolloServer({typeDefs, resolvers});
 
-module.exports.graphqlHandler = server.createHandler();
+module.exports.graphqlHandler = server.createHandler({
+    cors: {
+        origin: '*',
+        credentials: true
+    }
+});

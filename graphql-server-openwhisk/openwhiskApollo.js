@@ -6,7 +6,9 @@ function openwhiskApollo(options) {
     if (!options) {
         throw new Error('Need some options');
     }
+
     const graphqlHandler = (req, res) => {
+        console.log(`[openwhiskApollo] Handling graphql`);
         const hasPostBody = req.body && Object.keys(req.body).length > 0;
         if (req.method === 'POST' && !hasPostBody) {
             res.status(500).send('POST body missing.');
@@ -39,9 +41,6 @@ function openwhiskApollo(options) {
             }
         );
     };
-
-    // const name = params.name || 'World';
-    // return {payload: `Hello, ${name}!`};
     return graphqlHandler;
 }
 

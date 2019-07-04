@@ -18,6 +18,7 @@ service: graphqlService
 provider:
   name: openwhisk
   ignore_certs: true
+  
 
 package:
   excludeDevDependencies: true
@@ -27,21 +28,26 @@ package:
 
 custom:
   webpack:
+    packager: yarn
     webpackConfig: ./webpack.config.js
     includeModules: true
 
 functions:
   graphql:
     handler: graphql.graphqlHandler
+    annotations:
+      require-whisk-auth: false
     events:
       - http:
           path: graphql
           method: post
           cors: true
+          resp: http
       - http:
           path: graphql
           method: get
           cors: true
+          resp: http
 
 plugins:
   - serverless-openwhisk

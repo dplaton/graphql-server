@@ -1,5 +1,5 @@
 const openwhiskApollo = require('./openwhiskApollo');
-const ApolloServerBase = require('apollo-server-core');
+const {ApolloServerBase} = require('apollo-server-core');
 
 class ApolloServer extends ApolloServerBase {
     constructor(options) {
@@ -19,11 +19,13 @@ class ApolloServer extends ApolloServerBase {
         return super.graphQLServerOptions({req, res});
     }
 
-    createHandler({cors}) {
-        const promiseWillStart = this.start();
+    createHandler({cors = undefined} = {}) {
+        console.log(`Creating handler...`);
+        const promiseWillStart = this.willStart();
         const corsHeaders = {};
 
         if (cors) {
+            console.log(`We have CORS`);
             if (cors.methods) {
                 if (typeof cors.methods === 'string') {
                     corsHeaders['Access-Control-Allow-Methods'] = cors.methods;
@@ -63,6 +65,9 @@ class ApolloServer extends ApolloServerBase {
         }
 
         return (req, res) => {
+            console.log(`[ApolloServer] Inspect the arguments:`);
+            console.log('[ApolloServer] What is our request?', req);
+            console.log('Do we have a response?', res);
             if (req.path && !['', '/', '/graphql'].includes(req.path)) {
                 res.status(404).end();
                 return;
@@ -106,7 +111,6 @@ class ApolloServer extends ApolloServerBase {
                     return;
                 }
             }
-
             res.set(corsHeaders);
 
             openwhiskApollo(async () => {

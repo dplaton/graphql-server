@@ -11,5 +11,9 @@ module.exports = {
     },
     target: 'node',
     mode: 'development',
+    optimization: {
+		// We no not want to minimize our code.
+		minimize: false
+	},
     externals: [nodeExternals()]
 };
