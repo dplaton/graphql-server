@@ -1,28 +1,32 @@
-import {ApolloServer, gql} from 'apollo-server';
-import typeDefs from './schema.graphql';
-import Query from './resolvers/Query';
-import Mutation from './resolvers/Mutation';
-
-import MagentoGraphqlApi from './datasources/MagentoGraphqlApi';
-import MagentoRestApi from './datasources/MagentoRestApi';
-
 require('dotenv');
+const {
+    introspectSchema,
+    makeRemoteExecutableSchema,
+    ApolloServer
+} = require('apollo-server');
 
-const server = new ApolloServer({
-    typeDefs,
-    resolvers: {Query, Mutation},
-    dataSources: () => {
-        return {
-            magentoGraphqlApi: new MagentoGraphqlApi({
-                url: process.env.MAGENTO_GRAPHQL_URL
-            }),
-            magentoRestApi: new MagentoRestApi({
-                url: process.env.MAGENTO_REST_URL
-            })
-        };
-    }
-});
+const fetch = require('node-fetch');
+const {HttpLink} = require('apollo-link-http');
 
-server.listen().then(({url}) => {
-    console.log(`🚀 Server ready at ${url}`);
-});
+const buildServer = async () => {
+    const link = new HttpLink({uri: process.env.MAGENTO_GRAPHQL_URL, fetch});
+    const schema = await introspectSchema(link);
+    const executableSchema = makeRemoteExecutableSchema({
+        schema,
+        link
+    });
+    const server = new ApolloServer({
+        schema: executableSchema
+    });
+
+    server
+        .listen()
+        .then(({url}) => {
+            console.log(`🚀 Server ready at ${url}`);
+        })
+        .catch(e => {
+            throw new Error(e);
+        });
+};
+
+buildServer();
