@@ -37,17 +37,8 @@ functions:
     handler: graphql.graphqlHandler
     annotations:
       require-whisk-auth: false
-    events:
-      - http:
-          path: graphql
-          method: post
-          cors: true
-          resp: http
-      - http:
-          path: graphql
-          method: get
-          cors: true
-          resp: http
+      web-export: true
+   
 
 plugins:
   - serverless-openwhisk

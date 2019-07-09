@@ -10,7 +10,9 @@
   "devDependencies": {
     "cross-env": "^5.2.0",
     "graphql-server-core": "^1.0.0",
-    "serverless-openwhisk": ">=0.13.0"
+    "serverless-openwhisk": ">=0.13.0",
+    "webpack": "^4.35.2",
+    "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
     "apollo-server-core": "^2.6.7",

@@ -19,9 +19,4 @@ const resolvers = {
 console.log(`[graphql] Building the server...`);
 const server = new ApolloServer({typeDefs, resolvers});
 
-module.exports.graphqlHandler = server.createHandler({
-    cors: {
-        origin: '*',
-        credentials: true
-    }
-});
+module.exports.graphqlHandler = server.createHandler({});

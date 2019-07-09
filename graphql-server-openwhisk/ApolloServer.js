@@ -1,4 +1,4 @@
-const openwhiskApollo = require('./openwhiskApollo');
+const {openwhiskApollo} = require('./openwhiskApollo');
 const {ApolloServerBase} = require('apollo-server-core');
 
 class ApolloServer extends ApolloServerBase {
@@ -16,14 +16,15 @@ class ApolloServer extends ApolloServerBase {
     // provides typings for the integration specific behavior, ideally this would
     // be propagated with a generic to the super class
     createGraphQLServerOptions(req, res) {
+        console.log(`Create GraphqlServerOptions...`);
+        req.debug = true;
         return super.graphQLServerOptions({req, res});
     }
 
     createHandler({cors = undefined} = {}) {
-        console.log(`Creating handler...`);
+        console.log(`[Apollo Server] Creating handler...`);
         const promiseWillStart = this.willStart();
         const corsHeaders = {};
-
         if (cors) {
             console.log(`We have CORS`);
             if (cors.methods) {
@@ -67,8 +68,14 @@ class ApolloServer extends ApolloServerBase {
         return (req, res) => {
             console.log(`[ApolloServer] Inspect the arguments:`);
             console.log('[ApolloServer] What is our request?', req);
-            console.log('Do we have a response?', res);
-            if (req.path && !['', '/', '/graphql'].includes(req.path)) {
+            console.log('[ApolloServer] What is our response?', res);
+
+            res = {};
+            res.set = () => {};
+            if (
+                req['__ow_path'] &&
+                !['', '/', '/graphql'].includes(req['__ow_path'])
+            ) {
                 res.status(404).end();
                 return;
             }
@@ -113,10 +120,13 @@ class ApolloServer extends ApolloServerBase {
             }
             res.set(corsHeaders);
 
-            openwhiskApollo(async () => {
+            const options = async () => {
+                console.log('Executing options...');
                 await promiseWillStart;
                 return this.createGraphQLServerOptions(req, res);
-            })(req, res);
+            };
+
+            console.log(openwhiskApollo(options)(req, res));
         };
     }
 }
