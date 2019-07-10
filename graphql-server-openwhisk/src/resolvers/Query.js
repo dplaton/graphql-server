@@ -2,11 +2,15 @@ import MagentoGraphqlApi from '../datasources/MagentoGraphqlApi';
 
 export default {
     products: async (parent, args, {dataSources}, info) => {
-        const searchTerm = args.searchTerm;
+        const searchTerm = args.searchTerm || '%';
         console.log(`Searching for ${searchTerm}`);
         const result = await dataSources.magentoGraphqlApi.searchProducts(
             searchTerm
         );
+
+        if (result === null) {
+            throw new Error('Some error was encountered');
+        }
 
         const products = result.items.map(item => {
             return {

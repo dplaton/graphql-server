@@ -1,5 +1,8 @@
-const {openwhiskApollo} = require('./openwhiskApollo');
-const {ApolloServerBase} = require('apollo-server-core');
+import {openwhiskApollo} from './openwhiskApollo';
+import {ApolloServerBase} from 'apollo-server-core';
+import {renderPlaygroundPage} from '@apollographql/graphql-playground-html';
+
+import HttpResponse from './http-response';
 
 class ApolloServer extends ApolloServerBase {
     constructor(options) {
@@ -22,43 +25,27 @@ class ApolloServer extends ApolloServerBase {
         const promiseWillStart = this.willStart();
 
         return (req, res) => {
-            console.log(`[ApolloServer] Inspect the arguments:`);
             console.log('[ApolloServer] What is our request?', req);
-            console.log('[ApolloServer] What is our response?', res);
 
             let response;
+            const headers = req['__ow_headers'];
 
-            if (
-                req['__ow_path'] &&
-                !['', '/', '/graphql'].includes(req['__ow_path'])
-            ) {
-                response = new HttpResponse(404);
-                return res.toJson;
-            }
-
-            if (req.method === 'OPTIONS') {
+            if (req['__ow_method'] === 'OPTIONS') {
                 return new HttpResponse({body: ''}, 204, {}).toJson();
             }
 
-            if (this.playgroundOptions && req.method === 'GET') {
+            if (this.playgroundOptions && req['__ow_method'] === 'get') {
                 console.log(`Playground page requested`);
-                const acceptHeader = req.headers['accept'];
+                const acceptHeader = headers.accept;
                 if (acceptHeader && acceptHeader.includes('text/html')) {
                     const playgroundRenderPageOptions = {
-                        endpoint: req['referer'],
+                        endpoint:
+                            'https://adobeioruntime.net/api/v1/web/platon2/default/graphqlService-dev-graphql',
                         ...this.playgroundOptions
                     };
-
-                    response = new HttpResponse(
-                        {
-                            body: renderPlaygroundPage(
-                                playgroundRenderPageOptions
-                            )
-                        },
-                        200,
-                        {}
-                    );
-                    return response.toJson();
+                    return {
+                        body: renderPlaygroundPage(playgroundRenderPageOptions)
+                    };
                 }
             }
 
@@ -73,4 +60,4 @@ class ApolloServer extends ApolloServerBase {
     }
 }
 
-module.exports = ApolloServer;
+export default ApolloServer;

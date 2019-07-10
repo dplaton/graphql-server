@@ -16,7 +16,7 @@ class MagentoGraphqlApi extends GraphQLDataSource {
             });
             return response.data.products;
         } catch (e) {
-            console.log(`ERROR`);
+            console.log(`[MagentoGraphqlApi] Error:`);
             console.log(e);
         }
     }
