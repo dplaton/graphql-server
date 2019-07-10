@@ -1,47 +1,19 @@
-# Serverless OpenWhisk Node.js Template
+# ApolloServer implementation for OpenWhisk
 
-Hello! 😎
+This is an ApolloServer implementation that runs in OpenWhisk.
 
-This is a template Node.js service for the OpenWhisk platform. Before you can deploy your service, please follow the instructions below…
+## How do I install it?
 
-### Have you set up your account credentials?
+Make sure you have `serverless` install globally, so run an `npm i -g serverless`
 
-Before you can deploy your service to OpenWhisk, you need to have an account registered with the platform.
+1. Clone this repository
+2. Run `yarn install` to install everything
+3. Run `serverless install` to install it in OpenWhisk
 
-- *Want to run the platform locally?* Please read the project's [*Quick Start*](https://github.com/openwhisk/openwhisk#quick-start) guide for deploying it locally.
-- *Want to use a hosted provider?* Please sign up for an account with [IBM Bluemix](https://console.ng.bluemix.net/) and then follow the instructions for getting access to [OpenWhisk on Bluemix](https://console.ng.bluemix.net/openwhisk/). 
+The name of the action is hardcoded as `graphqlService-dev-graphql` (update your `serverless.yml` file if you don't fancy this).
 
-Account credentials for OpenWhisk can be provided through a configuration file or environment variables. This plugin requires the API endpoint, namespace and authentication credentials.
+## How do I access it?
 
-**Do you want to use a configuration file for storing these values?** Please [follow the instructions](https://console.ng.bluemix.net/openwhisk/cli) for setting up the OpenWhisk command-line utility. This tool stores account credentials in the `.wskprops` file in the user's home directory. The plugin automatically extracts credentials from this file at runtime.  No further configuration is needed.
+Option 1: Open your favorite GraphQL client, point it to the `<your ow instance>/graphqlService-dev-graphql` endpoint and start querying.
 
-**Do you want to use environment variables for credentials?** Use the following environment variables to be pass in account credentials. These values override anything extracted from the configuration file.
-
-- *OW_APIHOST* - Platform endpoint, e.g. `openwhisk.ng.bluemix.net`
-- *OW_AUTH* - Authentication key, e.g. `xxxxxx:yyyyy
-
-### Have you installed the provider plugin?
-
-Install project dependencies which includes the OpenWhisk provider plugin.
-
-```
-$ npm install
-```
-
-**_…and that's it!_**
-
-### Deploy Service
-
-Use the `serverless` command to deploy your service. The sample `handler.js` file can be deployed without modification.
-
-```shell
-serverless deploy
-```
-
-
-
-### Issues / Feedback / Feature Requests?
-
-If you have any issues, comments or want to see new features, please file an issue in the project repository:
-
-https://github.com/serverless/serverless-openwhisk
+Option 2: Open the action URL in your favourite browser and you should get the GraphQL playground page
