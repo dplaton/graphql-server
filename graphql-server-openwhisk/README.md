@@ -8,7 +8,8 @@ Make sure you have `serverless` install globally, so run an `npm i -g serverless
 
 1. Clone this repository
 2. Run `yarn install` to install everything
-3. Run `serverless install` to install it in OpenWhisk
+3. Rename `.env.sample` to `.env` and configure your endpoints
+4. Run `serverless install` to install it in OpenWhisk
 
 The name of the action is hardcoded as `graphqlService-dev-graphql` (update your `serverless.yml` file if you don't fancy this).
 

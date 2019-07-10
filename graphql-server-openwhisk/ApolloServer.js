@@ -39,8 +39,7 @@ class ApolloServer extends ApolloServerBase {
                 const acceptHeader = headers.accept;
                 if (acceptHeader && acceptHeader.includes('text/html')) {
                     const playgroundRenderPageOptions = {
-                        endpoint:
-                            'https://adobeioruntime.net/api/v1/web/platon2/default/graphqlService-dev-graphql',
+                        endpoint: process.env.OW_ENDPOINT,
                         ...this.playgroundOptions
                     };
                     return {
