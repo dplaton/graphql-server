@@ -1,22 +1,26 @@
-// graphql.js
+import ApolloServer from './ApolloServer';
+import Query from './src/resolvers/Query';
+import Mutation from './src/resolvers/Mutation';
+import typeDefs from './src/schema.graphql';
+import MagentoGraphqlApi from './src/datasources/MagentoGraphqlApi';
+import MagentoRestApi from './src/datasources/MagentoRestApi';
 
-const {gql} = require('apollo-server-core');
-const ApolloServer = require('./ApolloServer');
-
-// Construct a schema, using GraphQL schema language
-const typeDefs = gql`
-    type Query {
-        hello: String
-    }
-`;
-
-// Provide resolver functions for your schema fields
-const resolvers = {
-    Query: {
-        hello: () => 'Hello world!'
-    }
-};
 console.log(`[graphql] Building the server...`);
-const server = new ApolloServer({typeDefs, resolvers});
+const server = new ApolloServer({
+    typeDefs,
+    resolvers: {Query, Mutation},
+    introspection: true,
+    dataSources: () => {
+        return {
+            magentoGraphqlApi: new MagentoGraphqlApi({
+                url: process.env.MAGENTO_GRAPHQL_URL
+            }),
+            magentoRestApi: new MagentoRestApi({
+                url: process.env.MAGENTO_REST_URL
+            })
+        };
+    }
+});
 
-module.exports.graphqlHandler = server.createHandler({});
+const graphqlHandler = server.createHandler({});
+export {graphqlHandler};
