@@ -11,13 +11,15 @@ function openwhiskApollo(options) {
 
     const graphqlHandler = (req, res) => {
         console.log(`[openwhiskApollo] Handling graphql...`);
-
         console.log('[GrapqhHandler] Our request is', req);
 
         const method = req['__ow_method'];
+        if (!method) {
+            return;
+        }
         console.log(`Using method ${method}`);
 
-        const hasPostBody = req['__ow_body'] && req['__ow_body'].length > 0;
+        const hasPostBody = req['query'] && req['query'].length > 0;
         if (method === 'post' && !hasPostBody) {
             console.log('[GraphqlHandler] POST body missing');
 
@@ -29,53 +31,48 @@ function openwhiskApollo(options) {
             return httpResponse.toJson();
         }
 
+        const query = req['query'];
+
         console.log(`Do we have a body? ${hasPostBody}`);
-        console.log(`What's our body ${req['__ow_body']}`);
+        console.log(`What's our body ${query}`);
         console.log(`Running the HTTPquery...`);
-        runHttpQuery([req, res], {
+
+        const request = {
             method: method.toUpperCase(),
-            options: options,
-            query: {query: 'query { hello }'},
-            request: {
-                query: {query: 'query { hello }'},
-                url: req.url,
-                method: method.toUpperCase(),
-                headers: new Headers(req['__ow_headers']) // ? Check if this actually works
-            }
-        })
-            .then(
-                ({graphqlResponse, responseInit}) => {
-                    res = {
-                        statusCode: 200,
-                        body: {
-                            ...graphqlResponse
-                        }
-                    };
-                    const httpResponse = new HttpResponse(
-                        {...graphqlResponse},
-                        200,
-                        {
-                            ...responseInit.headers
-                        }
-                    );
-                    Promise.resolve(httpResponse.toJson());
-                },
-                error => {
-                    console.log(`We have some errors`, error);
-                    if ('HttpQueryError' !== error.name) {
-                        res.status(500).send(error);
-                        return;
-                    }
-                    res = {
-                        statusCode: 400,
-                        message: error.message
-                    };
-                    return res;
+            options,
+            query: {
+                query
+            },
+            headers: new Headers(req['__ow_headers']),
+            url: req.url,
+            referrer: req.url
+        };
+
+        return runHttpQuery([req, res], request).then(
+            ({graphqlResponse, responseInit}) => {
+                const response = new HttpResponse(graphqlResponse, 200, {
+                    ...responseInit.headers
+                });
+
+                console.log('runHttpQuery returns', response.toJson());
+                return response.toJson();
+            },
+            error => {
+                console.log(`We have some errors`, error);
+                if ('HttpQueryError' !== error.name) {
+                    return new HttpResponse(
+                        {error: error.name},
+                        500,
+                        {}
+                    ).toJson();
                 }
-            )
-            .then(res => {
-                console.log(`...and`, res);
-            });
+                return new HttpResponse(
+                    {message: error.message},
+                    400,
+                    {}
+                ).toJson();
+            }
+        );
     };
     return graphqlHandler;
 }

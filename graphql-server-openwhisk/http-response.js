@@ -28,12 +28,6 @@ class HttpResponse {
     constructor(body, statusCode = 200, headers = {}) {
         /**
          *
-         * @type {Object}
-         */
-        this.body = undefined;
-
-        /**
-         *
          * @type {Number}
          */
         this.statusCode = statusCode;
@@ -50,14 +44,14 @@ class HttpResponse {
          */
         this.error = undefined;
 
-        this.setBody(body);
+        this.body = body;
         this.headers = this.headers || {};
         this.headers['Content-Type'] = 'application/json';
     }
 
     setBody(body) {
         if (body) {
-            this.body = Buffer.from(JSON.stringify(body)).toString('base64');
+            this.body = JSON.stringify(body);
         }
     }
 
