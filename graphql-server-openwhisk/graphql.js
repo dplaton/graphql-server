@@ -1,4 +1,4 @@
-import ApolloServer from './ApolloServer';
+import ApolloServer from './src/ApolloServer';
 import Query from './src/resolvers/Query';
 import Mutation from './src/resolvers/Mutation';
 import typeDefs from './src/schema.graphql';
