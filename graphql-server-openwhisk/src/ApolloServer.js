@@ -1,3 +1,6 @@
+/**
+ * A custom implementation of the Apollo Server so that it works in a serverless environment.
+ */
 import {openwhiskApollo} from './openwhiskApollo';
 import {ApolloServerBase} from 'apollo-server-core';
 import {renderPlaygroundPage} from '@apollographql/graphql-playground-html';
@@ -12,14 +15,15 @@ class ApolloServer extends ApolloServerBase {
         };
     }
 
-    // This translates the arguments from the middleware into graphQL options It
-    // provides typings for the integration specific behavior, ideally this would
-    // be propagated with a generic to the super class
     createGraphQLServerOptions(req, res) {
         console.log(`Create GraphqlServerOptions...`);
         return super.graphQLServerOptions({req, res});
     }
 
+    /**
+     * Creates a function that will handle all our requests
+     * @param {} param0
+     */
     createHandler({cors = undefined} = {}) {
         console.log(`[Apollo Server] Creating handler...`);
         const promiseWillStart = this.willStart();
@@ -34,8 +38,9 @@ class ApolloServer extends ApolloServerBase {
                 return new HttpResponse({body: ''}, 204, {}).toJson();
             }
 
+            // if this is a plain HTTP GET request then we just render the playground
             if (this.playgroundOptions && req['__ow_method'] === 'get') {
-                console.log(`Playground page requested`);
+                console.log(`[ApolloServer] Playground page requested`);
                 const acceptHeader = headers.accept;
                 if (acceptHeader && acceptHeader.includes('text/html')) {
                     const playgroundRenderPageOptions = {

@@ -2,7 +2,11 @@
   "name": "graphql-server-function",
   "version": "1.0.0",
   "description": "Sample OpenWhisk NodeJS serverless framework service.",
-  "main": "handler.js",
+  "main": "graphql.js",
+  "scripts": {
+    "deploy": "serverless deploy",
+    "analyze": "webpack --profile --json > stats.json && webpack-bundle-analyzer stats.json"
+  },
   "keywords": [
     "serverless",
     "openwhisk"
@@ -13,6 +17,8 @@
     "graphql-server-core": "^1.0.0",
     "serverless-openwhisk": ">=0.13.0",
     "webpack": "^4.35.2",
+    "webpack-bundle-analyzer": "^3.3.2",
+    "webpack-cli": "^3.3.5",
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {

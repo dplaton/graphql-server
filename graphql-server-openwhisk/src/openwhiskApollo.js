@@ -1,24 +1,27 @@
 'use strict';
-const runHttpQuery = require('apollo-server-core').runHttpQuery;
-const {Headers} = require('apollo-server-env');
-const HttpResponse = require('./http-response');
+import {runHttpQuery} from 'apollo-server-core';
+import {Headers} from 'apollo-server-env';
+import HttpResponse from './http-response';
 
+/**
+ * Creates a function that handles the GraphQL query
+ * @param {*} options
+ */
 function openwhiskApollo(options) {
-    console.log('Executing openWhiskApollo...');
     if (!options) {
         throw new Error('Need some options');
     }
 
     const graphqlHandler = (req, res) => {
-        console.log(`[openwhiskApollo] Handling graphql...`);
+        console.log(`[openwhiskApollo] Handling graphql query...`);
         console.log('[GrapqhHandler] Our request is', req);
 
         const method = req['__ow_method'];
         if (!method) {
             return;
         }
-        console.log(`Using method ${method}`);
 
+        // naively check the request
         const hasPostBody = req['query'] && req['query'].length > 0;
         if (method === 'post' && !hasPostBody) {
             console.log('[GraphqlHandler] POST body missing');
@@ -33,10 +36,6 @@ function openwhiskApollo(options) {
 
         const query = req['query'];
 
-        console.log(`Do we have a body? ${hasPostBody}`);
-        console.log(`What's our body ${query}`);
-        console.log(`Running the HTTPquery...`);
-
         const request = {
             method: method.toUpperCase(),
             options,
@@ -50,14 +49,15 @@ function openwhiskApollo(options) {
 
         return runHttpQuery([req, res], request).then(
             ({graphqlResponse, responseInit}) => {
+                // query successful, now we return the results
                 const response = new HttpResponse(graphqlResponse, 200, {
                     ...responseInit.headers
                 });
 
-                console.log('runHttpQuery returns', response.toJson());
                 return response.toJson();
             },
             error => {
+                // errors were encountered, so we respond with that
                 console.log(`We have some errors`, error);
                 if ('HttpQueryError' !== error.name) {
                     return new HttpResponse(
@@ -77,4 +77,4 @@ function openwhiskApollo(options) {
     return graphqlHandler;
 }
 
-module.exports.openwhiskApollo = openwhiskApollo;
+export {openWhiskApollo};
