@@ -1,13 +1,14 @@
-require('dotenv');
+require('dotenv').config();
 
 const {ApolloClient, gql} = require('apollo-boost');
 const {createHttpLink} = require('apollo-link-http');
 const {InMemoryCache} = require('apollo-cache-inmemory');
 
+console.log(`Graphql endpoint ${process.env.GRAPHQL_ENDPOINT}`);
+
 const client = new ApolloClient({
     link: createHttpLink({
-        uri:
-            'https://adobeioruntime.net/api/v1/web/platon2/default/graphqlService-dev-graphql/graphql',
+        uri: process.env.GRAPHQL_ENDPOINT,
         fetch: require('node-fetch')
     }),
     cache: new InMemoryCache()
@@ -15,7 +16,10 @@ const client = new ApolloClient({
 
 const HELLO_QUERY = gql`
     query {
-        hello
+        products(searchTerm: "acce") {
+            name
+            sku
+        }
     }
 `;
 
