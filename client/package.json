@@ -11,6 +11,6 @@
     "apollo-link": "^1.2.12",
     "dotenv": "^8.0.0",
     "graphql": "^14.4.2",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.1"
   }
 }
